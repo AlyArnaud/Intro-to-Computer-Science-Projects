@@ -110,47 +110,47 @@ class Message(object):
         Returns: a dictionary mapping a letter (string) to 
                  another letter (string). 
         '''
-        all_letters = string.ascii_letters
+        _all_letters = string.ascii_letters
                 
         #Create dictionary matching letter to value 
         #{a:1, b:2 ... A:26, B:27}
-        init_dict = {}
-        index = 0
-        for char in all_letters: 
-            init_dict[char] = index
-            index = index+1
+        _init_dict = {}
+        _index = 0
+        for _char in _all_letters: 
+            _init_dict[_char] = _index
+            _index = _index+1
                
         #Create dictionary matching value to letter 
         #{1:a, 2:b ... 26:A, 27:B}    
-        ref_dict = {}
-        index = 0
-        for char in all_letters: 
-            ref_dict[index] = char
-            index = index+1
+        _ref_dict = {}
+        _index = 0
+        for _char in _all_letters: 
+            _ref_dict[_index] = _char
+            _index = _index+1
         
         #For every letter in init_dict shift according to passed shift key
         #For lowercase letters:
-        for elem in init_dict: 
-            if  init_dict[elem] < 26:
-                key = init_dict[elem]
+        for _elem in _init_dict: 
+            if  _init_dict[_elem] < 26:
+                _key = _init_dict[_elem]
                 #if shift results in key greater than 25, mod 26 to loop around
-                shifted_key = (key + shift) % 26
+                _shifted_key = (_key + shift) % 26
                 #correlate new key to letter in ref_dict & update init_dict
-                shifted_char = ref_dict[shifted_key]
-                init_dict[elem] = shifted_char
+                _shifted_char = _ref_dict[_shifted_key]
+                _init_dict[_elem] = _shifted_char
                 
             #For uppercase letters
-            elif init_dict[elem] >= 26:
-                key = init_dict[elem]
+            elif _init_dict[_elem] >= 26:
+                _key = _init_dict[_elem]
                 #change to lowercase letter so mod function works correctly
-                reduced_key = key - 26
-                shifted_key = (reduced_key + shift) % 26
+                _reduced_key = _key - 26
+                _shifted_key = (_reduced_key + shift) % 26
                 #change back to uppercase letter
-                caps_key = shifted_key + 26
-                shifted_char = ref_dict[caps_key]
-                init_dict[elem] = shifted_char
+                _caps_key = _shifted_key + 26
+                _shifted_char = _ref_dict[_caps_key]
+                _init_dict[_elem] = _shifted_char
         #return dictionary pairing old letter to shifted letter {a:f, b:g...}
-        return init_dict
+        return _init_dict
 
 
     def apply_shift(self, shift):
@@ -166,21 +166,21 @@ class Message(object):
              down the alphabet by the input shift
         '''
         #Create shift dictionary 
-        shift_dict = Message.build_shift_dict(self, shift)
+        _shift_dict = self.build_shift_dict(shift)
         #translated string = ""
-        translated_string = ""
+        _translated_string = ""
         #For character in string
-        for char in Message.get_message_text(self):
+        for _char in self.get_message_text():
         #Check if is_alpha or not
-            if char in string.ascii_letters:
+            if _char in string.ascii_letters:
                 #if is alpha, shift according to dictionary
                 #append to translated_string
-                translated_string = translated_string + shift_dict[char]
+                _translated_string = _translated_string + _shift_dict[_char]
         #if not is_alpha, append to translated_string
             else:
-                translated_string += char
+                _translated_string += _char
         #return shifted string
-        return translated_string
+        return _translated_string
         
 
 class PlaintextMessage(Message):
@@ -201,10 +201,10 @@ class PlaintextMessage(Message):
         '''
         #self.message_text assigned in parent class
         #self.valid_words = load_words() assigned in parent class
-        Message.__init__(self, text)
+        super().__init__(text)
         self.shift = shift
-        self.encryption_dict = Message.build_shift_dict(self, shift)
-        self.message_text_encrypted = Message.apply_shift(self, shift)
+        self.encryption_dict = self.build_shift_dict(shift)
+        self.message_text_encrypted = self.apply_shift(shift)
 
     def get_shift(self):
         '''
@@ -260,7 +260,8 @@ class CiphertextMessage(Message):
             self.message_text (string, determined by input text)
             self.valid_words (list, determined using helper function load_words)
         '''
-        Message.__init__(self, text)
+        
+        super().__init__(text)
         #self.message_text = text defined in parent class
         #self.valid_words = load_words() defined in parent class
 
@@ -281,39 +282,39 @@ class CiphertextMessage(Message):
         and the decrypted message text using that shift value
         '''
         #record best_shift as int
-        best_shift = 0
+        _best_shift = 0
         #record highest_word_count as int
-        highest_word_count = 0
+        _highest_word_count = 0
         #for int in range 0 to 26:
-        for num in range (26):
+        for _num in range (26):
             
             #apply shift to message 
-            message_attempt = self.apply_shift(num)
+            _message_attempt = self.apply_shift(_num)
             # print("message_attemt = " + message_attempt)
             # print("num: " + str(num))
             #in for loop counter for num correct words
-            word_count = 0
+            _word_count = 0
             
             #change message_attempt string to list to iterate over
-            words_list = message_attempt.split()
+            _words_list = _message_attempt.split()
             #for word in message
-            for word in words_list: 
+            for _word in _words_list: 
                 #if word is in load_words word_count++
                 
                 #print(is_word(WORDLIST_FILENAME, word))
 
-                if is_word(self.valid_words, word):
-                    word_count = word_count+1
+                if is_word(self.valid_words, _word):
+                    _word_count = _word_count+1
                     #print("word_count:" + str(word_count))
             #if word_count > highest_word_count replace highest word count & update best_shift
-            if word_count > highest_word_count: 
-                highest_word_count = word_count
-                best_shift = num
+            if _word_count > _highest_word_count: 
+                _highest_word_count = _word_count
+                _best_shift = _num
                 
         #return a tuple with the shift and message text
-        my_message = Message.apply_shift(self, best_shift)
-        encrypted_message = (best_shift, my_message)
-        return encrypted_message
+        _my_message = self.apply_shift(_best_shift)
+        _encrypted_message = (_best_shift, _my_message)
+        return _encrypted_message
 
 if __name__ == '__main__':
 
