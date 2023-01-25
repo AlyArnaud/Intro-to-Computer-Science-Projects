@@ -114,34 +114,34 @@ class SubMessage(object):
         # CONSONANTS_LOWER = 'bcdfghjklmnpqrstvwxyz'
         # CONSONANTS_UPPER = 'BCDFGHJKLMNPQRSTVWXYZ'
         
-        vowels_permutation_lower = vowels_permutation.lower()
+        _vowels_permutation_lower = vowels_permutation.lower()
         #print("Lowercase: ", vowels_permutation_lower)
-        vowels_permutation_upper = vowels_permutation.upper()
+        _vowels_permutation_upper = vowels_permutation.upper()
         #print("Uppercase: ", vowels_permutation_upper)
         #Empty Dictionary
-        init_dict = {}
-        index = 0
+        _init_dict = {}
+        _index = 0
         #Add uppercase vowels
-        for char in VOWELS_UPPER: 
-            init_dict[char] = vowels_permutation_upper[index]
-            index = index +1
+        for _char in VOWELS_UPPER: 
+            _init_dict[_char] = _vowels_permutation_upper[_index]
+            _index = _index +1
         
         #Add lowercase vowels
-        index = 0
-        for char in VOWELS_LOWER:
-            init_dict[char] = vowels_permutation_lower[index]
-            index = index+1
+        _index = 0
+        for _char in VOWELS_LOWER:
+            _init_dict[_char] = _vowels_permutation_lower[_index]
+            _index = _index+1
         
          #Add lowercase consanants
-        for char in CONSONANTS_LOWER:
-            init_dict[char] = char
+        for _char in CONSONANTS_LOWER:
+            _init_dict[_char] = _char
         
         #Add uppercase consanants
-        for char in CONSONANTS_UPPER:
-            init_dict[char] = char
+        for _char in CONSONANTS_UPPER:
+            _init_dict[_char] = _char
             
         #print(init_dict)
-        return init_dict
+        return _init_dict
         
        
                 
@@ -152,19 +152,19 @@ class SubMessage(object):
         Returns: an encrypted version of the message text, based 
         on the dictionary
         '''
-        translated_string = ""
+        _translated_string = ""
         #For character in string
-        for char in SubMessage.get_message_text(self):
+        for _char in self.get_message_text():
         #Check if is_alpha or not
-            if char in string.ascii_letters:
+            if _char in string.ascii_letters:
                 #if is alpha, shift according to dictionary
                 #append to translated_string
-                translated_string = translated_string + transpose_dict[char]
+                _translated_string = _translated_string + transpose_dict[_char]
         #if not is_alpha, append to translated_string
             else:
-                translated_string += char
+                _translated_string += _char
         #return shifted string
-        return translated_string
+        return _translated_string
         
         
 class EncryptedSubMessage(SubMessage):
@@ -178,7 +178,7 @@ class EncryptedSubMessage(SubMessage):
             self.message_text (string, determined by input text)
             self.valid_words (list, determined using helper function load_words)
         '''
-        SubMessage.__init__(self, text)
+        super().__init__(text)
 
     def decrypt_message(self):
         '''
@@ -199,37 +199,37 @@ class EncryptedSubMessage(SubMessage):
         Hint: use your function from Part 4A
         '''
         #record best_shift as int
-        best_perm = ""
+        _best_perm = ""
         #record highest_word_count as int
-        highest_word_count = 0
+        _highest_word_count = 0
         #Create a list of all permutations
-        all_perms = get_permutations('aeiou')
+        _all_perms = get_permutations('aeiou')
         #for each permutation build a dict with the transpose build_transpose_dict
-        for perm in all_perms: 
-            dict_attempt = SubMessage.build_transpose_dict(self, perm)
+        for _perm in _all_perms: 
+            _dict_attempt = self.build_transpose_dict(_perm)
             #apply shift
-            message_attempt = SubMessage.apply_transpose(self, dict_attempt)
+            _message_attempt = self.apply_transpose(_dict_attempt)
             #test for num words isword
-            word_count = 0
+            _word_count = 0
             
             #change message_attempt string to list to iterate over
-            words_list = message_attempt.split()
+            _words_list = _message_attempt.split()
             #for word in message
-            for word in words_list: 
+            for _word in _words_list: 
                 #if word is in load_words word_count++
-                if is_word(self.valid_words, word):
-                    word_count = word_count+1
+                if is_word(self.valid_words, _word):
+                    _word_count = _word_count+1
                     #print("word_count:" + str(word_count))
             #if word_count > highest_word_count replace highest word count & update best_shift
-            if word_count > highest_word_count: 
-                highest_word_count = word_count
-                best_perm = perm
+            if _word_count > _highest_word_count: 
+                _highest_word_count = _word_count
+                _best_perm = _perm
                 
         #return a tuple with the shift and message text
-        best_dict = SubMessage.build_transpose_dict(self, best_perm)
-        my_message = SubMessage.apply_transpose(self, best_dict)
+        _best_dict = self.build_transpose_dict(_best_perm)
+        _my_message = self.apply_transpose(_best_dict)
 
-        return my_message
+        return _my_message
     
 
 if __name__ == '__main__':
